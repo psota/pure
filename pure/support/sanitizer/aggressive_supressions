@@ -1,0 +1,5 @@
+# TSAN thread suppression docs: https://github.com/google/sanitizers/wiki/ThreadSanitizerSuppressions
+
+race:ProcessChannel::CheckInvarients
+race:ProcessChannel::CheckInvariants
+race:ProcessChannel::GetDescription

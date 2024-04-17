@@ -1,0 +1,60 @@
+#!/usr/bin/env ruby
+
+# Author: James Psota
+# File:   directory_diff.rb 
+
+# Copyright (c) 2024 James Psota
+# __________________________________________
+
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+# 
+#   http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+
+
+# example:
+# given two directory paths, find the difference between them.
+# d1: "/Users/jim/Documents/Research/projects/hybrid_programming/pure/test/c_test/foo"
+# d2: "/Users/jim/Documents/Research/projects/hybrid_programming/pure/test/"
+# ==> "c_test/foo"
+
+raise "ERROR: Usage: #{$0} <d1> <d2>" unless ARGV.size >= 2
+
+DEFAULT_SEP = '/'.freeze()
+
+def find_diff(shorter, longer, sep)
+
+	if longer.match(/^#{shorter}.*/)
+		diff_parts = longer.split(sep) - shorter.split(sep)
+		diff_parts.join(sep)
+	else
+		abort "ERROR: #{shorter} must be a prefix of #{longer}."
+		exit
+	end
+end
+
+def main
+	d1 = ARGV[0]
+	d2 = ARGV[1]
+	sep = ARGV[2] || DEFAULT_SEP
+
+	puts (d1.length > d2.length) ? 
+		find_diff(d2, d1, sep)
+		:
+		find_diff(d1, d2, sep)
+end
+
+main()
