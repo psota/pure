@@ -24,7 +24,6 @@
 #ifndef PURE_COMMON_PURE_H
 #define PURE_COMMON_PURE_H
 
-// must be
 #ifndef __cplusplus
 #error "Must only include this file in from a C++ file"
 #endif

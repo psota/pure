@@ -10,9 +10,9 @@ Pure is a parallel programming model and runtime system for parallel computer sy
 1. [System Overview](#user-content-overview)
 2. [Example Application Pseudocode](#user-content-example)
 3. [Directory Contents](#directories)
-3. [Installation](#user-content-installation)
-4. [Writing and Compiling Pure Applications](#user-content-applications)
-5. [Academic Papers](#user-content-papers)
+4. [Installation](#user-content-installation)
+5. [Writing and Compiling Pure Applications](#user-content-applications)
+6. [Academic Papers](#user-content-papers)
 
 
 
@@ -193,7 +193,7 @@ Before proceeding, please ensure that the following are installed on your system
 
 3. After you configure your application Makefile, build your code, run `make` and to run your application, run `make run`.
 
-4. N.B. Pure's build system includes an extensive set of build targets to help to build, run, debug, and profile your applications. You can browse the targets in `test/Makefile.include.mk` and `support/Makefile_includes/*.mk`.
+4. N.B. Pure's build system includes an <a href="#build-targets">extensive set of build targets</a> to help to build, run, debug, and profile your applications. You can browse the targets in `test/Makefile.include.mk` and `support/Makefile_includes/*.mk`.
 
 
 ### Compiling Non-Pure applications (e.g., MPI) using Pure infrastructure
@@ -208,13 +208,12 @@ This distribution also includes infrastructure to build and profile non-Pure app
 
 3. To build your code, run `make` and to run your application, run `make run`.
 
-4. N.B. Pure's build system includes an extensive set of build targets to help to build, run, debug, and profile your applications. You can browse the targets in `support/Makefile_includes/*.mk`.
+4. N.B. Pure's build system includes an <a href="#build-targets">extensive set of build targets</a> to help to build, run, debug, and profile your applications. You can browse the targets in `support/Makefile_includes/*.mk`.
 
 
 ### Example Programs
 
-You can find simple Pure programs in the `/test` directory. We have additional programs that we are in the process of adding to this repository.
-
+You can find simple Pure programs in the `test` directory. We have additional programs that we are in the process of adding to this repository.
 
 
 
