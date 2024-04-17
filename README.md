@@ -1,6 +1,3 @@
-[//]: # before initial launch
-
-
 # Pure
 
 Pure is a parallel programming model and runtime system for parallel computer systems. The goal of Pure is to outperform parallel programming alternatives (e.g., MPI) in terms of both performance and programmability. Pure leverages custom lock-free data structures so that threads running in shared memory can efficiently communicate and collaborate on computation.
