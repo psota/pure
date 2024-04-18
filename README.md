@@ -23,9 +23,7 @@ Pure is a parallel programming model and runtime system for parallel computer sy
 
 Pure is a parallel programming model and runtime system explicitly designed to take advantage of shared memory within nodes in the context of a mostly message passing interface enhanced with the ability to use tasks to make use of idle cores. Pure leverages shared memory in two ways: (a) by allowing cores to steal work from each other while waiting on messages to arrive, and, (b) by leveraging efficient lock-free data structures in shared memory to achieve high-performance messaging and collective operations between the ranks within nodes.
 
-In our [PPoPP'24 paper](https://dl.acm.org/doi/abs/10.1145/3627535.3638503), we showed significant speedups from Pure, including speedups up to 2.1× on the CoMD molecular dynamics and the miniAMR adaptive mesh refinement applications scaling up to 4,096 cores.
-
-
+In our [PPoPP'24 paper](https://dl.acm.org/doi/abs/10.1145/3627535.3638503), we showed significant speedups from Pure, including speedups up to 2.1× on the CoMD molecular dynamics and the miniAMR adaptive mesh refinement applications scaling up to 4,096 cores. Further benchmarks in the paper show speedups over MPI above 5× on communication and collective operations ranging up to 65,536 cores.
 
 
 
@@ -208,13 +206,49 @@ This distribution also includes infrastructure to build and profile non-Pure app
 
 3. To build your code, run `make` and to run your application, run `make run`.
 
-4. N.B. Pure's build system includes an <a href="#build-targets">extensive set of build targets</a> to help to build, run, debug, and profile your applications. You can browse the targets in `support/Makefile_includes/*.mk`.
+4. N.B. Pure's build system includes an <a href="#user-content-build_targets">extensive set of build targets</a> to help to build, run, debug, and profile your applications. You can browse the targets in `support/Makefile_includes/*.mk`.
 
 
 ### Example Programs
 
 You can find simple Pure programs in the `test` directory. We have additional programs that we are in the process of adding to this repository.
 
+
+
+### Pure Build System Make Targets <a name="build_targets"></a>
+
+The Pure build system comes with many make-driven tools to help debug, profile, and run Pure applications. See below for some of the most useful targets. Run these commands from the application directory (where the application's `Makefile` is).
+
+#### Most common targets ####
+  * `make`: Default target builds the application, including libpure
+  * `make run`: Builds and runs the application 
+  * `make vars`: Prints out the current configuration of key build parameters
+  * `make clean`: Deletes object files, libraries (i.e., libpure), and application executables 
+  * `make clean_test`: Deletes application object files and executables 
+
+#### Debugging targets ####
+  * `make gdb`: Loads the application in gdb. Tip: define commands to be run when gdb first loads by defining `USER_GDB_COMMANDS` in your application Makefile.
+  * `make gdb-run`: like the `gdb` target, but immediately runs the program in gdb.
+  * `make llvm`: Runs application in llvm.
+
+  * `make valgrind`: Checks for memory leaks with [valgrind memcheck](https://valgrind.org/info/tools.html#memcheck). Note: We recommending running with `ASAN=1` in your Makefile instead of this.
+  * `make massif`: Profiles heap using [valgrind massif](https://valgrind.org/info/tools.html#memcheck). Also see other related targets: `massif-stack`, `ms_print`, `ms_print_stack`, `ms_print_totals`
+
+#### Profiling targets ####
+  * `make profile`: Does a performance counter-based profiling of the application; uses [Linux perf](https://perf.wiki.kernel.org/index.php/Main_Page). By default, measures cycles (`cycles:ppp`), overridable with `DEFAULT_PERF_EVENTS` environment variable. Run `make profile-report` to see the results of the profile.
+  * `make profile-report`: View the perf-based results of a profile collected with `make profile`
+  * `make flamegraph`: Generates a [Flamegraph](https://www.brendangregg.com/flamegraphs.html) for your application using perf. Defaults to visualizing cycles. 
+  * `make thread-timeline`: Runs Pure's thread-timeline tool to visualize application and runtime event durations, and visualizes it in an interactive web-based interface. 
+  * `make profile-stat`: View performance counter stats (using `perf stat`) 
+  * `make profile-c2c`: Runs [`perf-c2c`](https://man7.org/linux/man-pages/man1/perf-c2c.1.html) cacheline contention analyzer on your Pure application. 
+
+#### Other targets ####
+  * `make libpure`: Build libpure only 
+  * `make tidy`: Runs [clang-tidy](https://clang.llvm.org/extra/clang-tidy/) on the codebase
+  * `make purify-all`: Runs the Pure MPI-to-Pure source-level translator on Pure application code. Run by default automatically in above common build commands so this is usually not run by itself.
+  * `make ranks-on-topo`: Creates a PDF showing the Pure ranks on top of the CPU topology. Useful if you are using custom rank layouts and want to make sure your rank layout is as you intended.
+  * `make bloaty`: Profiles the binary size using [Google Bloaty](https://github.com/google/bloaty)
+  * `make list-targets`: Lists out the possible targets of the Pure build system. Note: it's probably more helpful to use this list as this has descriptions of each target.
 
 
 
