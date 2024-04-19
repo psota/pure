@@ -1,12 +1,8 @@
 # Pure
 
-Pure is a parallel programming model and runtime system for parallel computer systems. The goal of Pure is to outperform parallel programming alternatives (e.g., MPI) in terms of both performance and programmability. Pure leverages custom lock-free data structures so that threads running in shared memory can efficiently communicate and collaborate on computation.
+Pure is a high performance parallel programming model and runtime system that is easy to program.
 
-
-
-
-
-## Table of contents
+##  Contents
 1. [System Overview](#user-content-overview)
 2. [Example Application Pseudocode](#user-content-example)
 3. [Directory Contents](#directories)
@@ -16,15 +12,11 @@ Pure is a parallel programming model and runtime system for parallel computer sy
 
 
 
-
-
-
-## System Overview <a name="overview"></a>
+## Overview <a name="overview"></a>
 
 Pure is a parallel programming model and runtime system explicitly designed to take advantage of shared memory within nodes in the context of a mostly message passing interface enhanced with the ability to use tasks to make use of idle cores. Pure leverages shared memory in two ways: (a) by allowing cores to steal work from each other while waiting on messages to arrive, and, (b) by leveraging efficient lock-free data structures in shared memory to achieve high-performance messaging and collective operations between the ranks within nodes.
 
-In our [PPoPP'24 paper](https://dl.acm.org/doi/abs/10.1145/3627535.3638503), we showed significant speedups from Pure, including speedups up to 2.1× on the CoMD molecular dynamics and the miniAMR adaptive mesh refinement applications scaling up to 4,096 cores. Further benchmarks in the paper show speedups over MPI above 5× on communication and collective operations ranging up to 65,536 cores.
-
+In our [PPoPP'24 paper](https://dl.acm.org/doi/abs/10.1145/3627535.3638503), we showed significant speedups from Pure, including speedups up to 2.1× on the CoMD molecular dynamics and the miniAMR adaptive mesh refinement applications scaling up to 4,096 cores. Further microbenchmarks in the paper show speedups over MPI from 2× to >17× on communication and collective operations ranging from 2 - 65,536 cores.
 
 
 ## Example Application Pseudocode  <a name="example"></a>
@@ -228,9 +220,8 @@ The Pure build system comes with many make-driven tools to help debug, profile, 
 
 #### Debugging targets ####
   * `make gdb`: Loads the application in gdb. Tip: define commands to be run when gdb first loads by defining `USER_GDB_COMMANDS` in your application Makefile.
-  * `make gdb-run`: like the `gdb` target, but immediately runs the program in gdb.
-  * `make llvm`: Runs application in llvm.
-
+  * `make gdb-run`: like the `gdb` target, but immediately runs the program in [gdb](https://sourceware.org/gdb/).
+  * `make lldb`: Runs application in [lldb](https://lldb.llvm.org/).
   * `make valgrind`: Checks for memory leaks with [valgrind memcheck](https://valgrind.org/info/tools.html#memcheck). Note: We recommending running with `ASAN=1` in your Makefile instead of this.
   * `make massif`: Profiles heap using [valgrind massif](https://valgrind.org/info/tools.html#memcheck). Also see other related targets: `massif-stack`, `ms_print`, `ms_print_stack`, `ms_print_totals`
 
