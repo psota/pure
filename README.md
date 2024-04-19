@@ -1,6 +1,7 @@
 # Pure
 
-Pure is a high performance parallel programming model and runtime system that is easy to program.
+Pure is a parallel programming model and runtime system. Pure allows programmers to improve performance of parallel applications on clusters of multicores with minimal additional programming effort.
+
 
 ##  Contents
 1. [System Overview](#user-content-overview)
