@@ -1,6 +1,6 @@
 # Pure
 
-Pure is a parallel programming model and runtime system. Pure allows programmers to improve performance of parallel applications on clusters of multicores with minimal additional programming effort.
+Pure is a parallel programming model and runtime system. Pure enables programmers to improve performance of parallel applications on multicore clusters with minimal additional programming effort.
 
 
 ##  Contents
@@ -17,7 +17,7 @@ Pure is a parallel programming model and runtime system. Pure allows programmers
 
 Pure is a parallel programming model and runtime system explicitly designed to take advantage of shared memory within nodes in the context of a mostly message passing interface enhanced with the ability to use tasks to make use of idle cores. Pure leverages shared memory in two ways: (a) by allowing cores to steal work from each other while waiting on messages to arrive, and, (b) by leveraging efficient lock-free data structures in shared memory to achieve high-performance messaging and collective operations between the ranks within nodes.
 
-In our [PPoPP'24 paper](https://dl.acm.org/doi/abs/10.1145/3627535.3638503), we showed significant speedups from Pure, including speedups up to 2.1× on the CoMD molecular dynamics and the miniAMR adaptive mesh refinement applications scaling up to 4,096 cores. Further microbenchmarks in the paper show speedups over MPI from 2× to >17× on communication and collective operations ranging from 2 - 65,536 cores.
+In our [PPoPP'24 paper](https://dl.acm.org/doi/abs/10.1145/3627535.3638503), we showed significant speedups from Pure, including speedups up to 2.1× on the CoMD molecular dynamics and the miniAMR adaptive mesh refinement applications scaling up to 4,096 cores. Further microbenchmarks in the paper show speedups over MPI from 2× to 17× on communication and collective operations running on 2 - 65,536 cores.
 
 
 ## Example Application Pseudocode  <a name="example"></a>
