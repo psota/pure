@@ -235,7 +235,7 @@ Your application `Makefile` *must* specify the following:
 
   * `DEBUG`: Builds runtime and application in debug mode. Includes many runtime error checks, builds with debugging symbols (`-g`) and no compiler optimization (`-O0`, `-fno-omit-frame-pointer`, etc.). [Type: `0` or `1`]
   * `PROFILE`: Builds runtime and application with debugging symbols but also with compiler optimizations (`-O3`). Useful for performance profiling. [Type: `0` or `1`]
-  * `RELEASE`: Builds runtime and application with no debugging symbols and with all compiler optimizations (`-O3`, `-march=native`, etc.). Useful for optimal performance [Type: `0` or `1`]
+  * `RELEASE`: Builds runtime and application with no debugging symbols and with all compiler optimizations (`-O3`, `-march=native`, etc.). Most likely to provide optimal runtime performance [Type: `0` or `1`]
   * `DISABLE_PURIFICATION`: Disables the MPI-to-Pure source code translator. Default: `0`. [Options: `0` or `1`]
 
 #### Debugging options ####
@@ -254,12 +254,12 @@ Your application `Makefile` *must* specify the following:
   * `USER_CFLAGS`: Additional compiler flags to add when compiling C source files.
   * `USER_CXXFLAGS`: Additional compiler flags to add when compiling C++ source files.
   * `USER_LFLAGS`: Additional linker flags to add when linking.
-  * `LINK_TYPE`: Determines if libpure is built as a static or dynamic library. Default: `dynamic`. [Options: `static` or `dynamic`]  Default: `8`. [Options: `0` or `1`]
+  * `LINK_TYPE`: Determines if libpure is built as a static or dynamic library. Default: `dynamic`. [Options: `static` or `dynamic`]
 
 
 #### Other Pure options ####
   * `PROCESS_CHANNEL_BUFFERED_MSG_SIZE`: Number of usable entries in the lock-free circular buffer that is used for intra-node messaging ("Process Channels"). 
-  * `BUFFERED_CHAN_MAX_PAYLOAD_BYTES`: Threshold, in bytes, between using "buffered" and "rendezvous" style point-to-point messaging. If the message size is equal to or less than `BUFFERED_CHAN_MAX_PAYLOAD_BYTES` Pure will use the buffered (i.e., copy twice) approach. efault: `8192`. [Type: integer]
+  * `BUFFERED_CHAN_MAX_PAYLOAD_BYTES`: Threshold, in bytes, between using "buffered" and "rendezvous" style point-to-point messaging. If the message size is equal to or less than `BUFFERED_CHAN_MAX_PAYLOAD_BYTES` Pure will use the buffered (i.e., copy twice) approach. Default: `8192`. [Type: integer]
 
 
 ### Pure Build System Make Targets <a name="build_targets"></a>
