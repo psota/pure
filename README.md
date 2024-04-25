@@ -152,6 +152,7 @@ Before proceeding, please ensure that the following are installed on your system
 * [R](https://www.r-project.org/) is used to analyze experimental data and generate performance results *(optional)*
 * [Boost](https://www.boost.org/users/download/) `boost::hash` is used in non-performance-critical code to help manage memory deallocations; requires version 1.63+.
 * [jsoncpp](https://github.com/open-source-parsers/jsoncpp) to generate rank-level stats files
+* [jemalloc](https://jemalloc.net/) (*optional*) if you would like to use jemalloc instead of the standard allocator.
 
 ### Configuring Pure
 
@@ -199,13 +200,66 @@ This distribution also includes infrastructure to build and profile non-Pure app
 
 3. To build your code, run `make` and to run your application, run `make run`.
 
-4. N.B. Pure's build system includes an <a href="#user-content-build_targets">extensive set of build targets</a> to help to build, run, debug, and profile your applications. You can browse the targets in `support/Makefile_includes/*.mk`.
+4. N.B. Pure's build system includes an extensive set of <a href="#user-content-compiler_flags">compile-time options</a> and <a href="#user-content-build_targets">build targets</a> to help to modify the behavior of the Pure runtime and build, run, debug, and profile your applications, respectively. You can browse the targets in `support/Makefile_includes/*.mk`.
 
 
 ### Example Programs
 
 You can find simple Pure programs in the `test` directory. We have additional programs that we are in the process of adding to this repository.
 
+
+### Pure Compiler Flags <a name="compiler_flags"></a>
+
+All options for the Pure runtime system are controlled using compile-time flags, which are typically specified in the application `Makefile`. Most of these variables have reasonable defaults in `tests/Makefile.include.mk`, but you can override them to test out different options. The Pure library and the application are built and stored in a directory that encodes the state of all of these configuration options using a SHA1 hash of the options; so, your system can have pre-built `libpure`s and application binaries for different configuration options. Many of the general options are available for both Pure and "non-Pure" applications (i.e., MPI) to ensure we are using the same basic options when comparing performance.
+
+
+#### Required options ####
+
+Your application `Makefile` *must* specify the following:
+  * `TOTAL_THREADS`: The total number of ranks in your application (possibly spread out over multiple machines). [Type: `integer`]
+  * `RUN_ARGS`: Command-line arguments passed to your application (i.e., readable using `argv`)
+  * `ENABLE_HYPERTHREADS`: Specifies whether or not to run ranks on logical cores (aka "HyperThreads") or not.  [Type: `0` or `1`]
+  * `PURE_USER_CODE_SRCS`: Space-separated list of C or C++ source files that are run through the MPI-to-Pure source translator. For example, `source_file.cpp` will be rewritten and saved as `source_file.purified.cpp`. [Type: text]
+  * `NON_PURIFIED_SOURCES`: Space-separated list of C or C++ source files that are not run through the MPI-to-Pure source translator. These files should make any calls to the Pure runtime explicitely. [Type: text]
+  * `BIN_NAME`: The name of your binary file. [Type: text]
+
+
+
+#### Most commonly-used options ####
+  * `PURE_NUM_PROCS`: Manually specifies the number of processes running across your entire system. Use `AUTO` to have the system use a good/reasonable default based on other settings. Default: `AUTO`. [Type: `integer` if not `AUTO`]
+  * `PURE_RT_NUM_THREADS`: Manually specifies the number of threads (and therefore ranks) to run per Pure process. Default: `AUTO`. [Type: `integer` if not `AUTO`]
+  * `THREADS_PER_NODE_LIMIT`: When `PURE_NUM_PROCS` and  `PURE_RT_NUM_THREADS` are set to `AUTO`, limits the number of ranks (threads) on a node to the set amount instead of the number of cores on that node (real or virtual, depending on the value of `ENABLE_HYPERTHREADS`).
+
+  * `PROCESS_CHANNEL_VERSION`: Specifies the version of the intra-process message data structure that is used. We recommend using version `40` when not using Pure Tasks and version `460` to enable work stealing when using Pure Tasks. There are number of other versions; see `support/Makefile_includes/determine_preprocessor_vars.rb` for details. Version `411` is a useful mode to test that Pure Tasks are producing the correct value when work stealing is disabled. [Type: integer]
+  * `PCV_4_NUM_CONT_CHUNKS`: The number of "chunks" a Pure Task is broken into, which is relevant when work stealing is enabled. [Type: `0` or `1`]
+
+  * `DEBUG`: Builds runtime and application in debug mode. Includes many runtime error checks, builds with debugging symbols (`-g`) and no compiler optimization (`-O0`, `-fno-omit-frame-pointer`, etc.). [Type: `0` or `1`]
+  * `PROFILE`: Builds runtime and application with debugging symbols but also with compiler optimizations (`-O3`). Useful for performance profiling. [Type: `0` or `1`]
+  * `RELEASE`: Builds runtime and application with no debugging symbols and with all compiler optimizations (`-O3`, `-march=native`, etc.). Useful for optimal performance [Type: `0` or `1`]
+  * `DISABLE_PURIFICATION`: Disables the MPI-to-Pure source code translator. Default: `0`. [Options: `0` or `1`]
+
+#### Debugging options ####
+  * `PAUSE_FOR_DEBUGGER_ATTACH`: Pauses the application upon startup and before the application runs to give you a chance to attach your debugger to a Pure process. It prints out the `pid` of up to four Pure processes.
+  * `ASAN`: Enables the `-fsanitize=address` compiler flag, which compiles and runs your application with [Address Sanitizer](https://clang.llvm.org/docs/AddressSanitizer.html) enabled. Useful for finding memory leaks, double frees, out-of-bounds accesses, use-after-frees, etc. 
+  * `TSAN`: Enables the `-fsanitize=thread` compiler flag, which compiles and runs your application with [Thread Sanitizer](https://clang.llvm.org/docs/ThreadSanitizer.html) enabled. Useful for data races in your application (including the Pure Runtime).
+  * `MSAN`: Enables the `-fsanitize=memory` compiler flag, which compiles and runs your application with [Memory Sanitizer](https://clang.llvm.org/docs/MemorySanitizer.html) enabled. Useful for detecting uninitialized reads.
+  * `UBSAN`: Enables the `-fsanitize=undefined` compiler flag, which compiles and runs your application with [Undefined Behavior Sanitizer](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html) enabled. Useful for detecting undefined behavior such as dereferencing misaligned or null pointers or signed integer overflow.
+  * `COLLECT_THREAD_TIMELINE_DETAIL`: Runs the application collecting trace cycle-based timepoints, which can then be fed to the Pure Timeline profiler. Default: `0`. [Options: `0` or `1`]
+  * `DO_PRINT_CONT_DEBUG_INFO`: Prints out Pure Task debugging logs, which specify which Pure ranks execute which chunks of a particular Pure Task. Useful for debugging and getting a sense of distribution of chunk execution.
+
+
+#### Other application options ####
+  * `NUMA_SCHEME`: Specifies the manner in which ranks are laid out and pinned on the cores of a system. Specific to each system you run on. See `support/Makefile_includes/Makefile.cpu_config.mk`. Examples: `bind_sequence`, `bind_alternating`, `none`, etc.
+  * `USE_JEMALLOC`: Uses the [jemalloc memory allocator](https://jemalloc.net/) instead of the default allocator.
+  * `USER_CFLAGS`: Additional compiler flags to add when compiling C source files.
+  * `USER_CXXFLAGS`: Additional compiler flags to add when compiling C++ source files.
+  * `USER_LFLAGS`: Additional linker flags to add when linking.
+  * `LINK_TYPE`: Determines if libpure is built as a static or dynamic library. Default: `dynamic`. [Options: `static` or `dynamic`]  Default: `8`. [Options: `0` or `1`]
+
+
+#### Other Pure options ####
+  * `PROCESS_CHANNEL_BUFFERED_MSG_SIZE`: Number of usable entries in the lock-free circular buffer that is used for intra-node messaging ("Process Channels"). 
+  * `BUFFERED_CHAN_MAX_PAYLOAD_BYTES`: Threshold, in bytes, between using "buffered" and "rendezvous" style point-to-point messaging. If the message size is equal to or less than `BUFFERED_CHAN_MAX_PAYLOAD_BYTES` Pure will use the buffered (i.e., copy twice) approach. efault: `8192`. [Type: integer]
 
 
 ### Pure Build System Make Targets <a name="build_targets"></a>

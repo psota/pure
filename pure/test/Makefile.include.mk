@@ -50,7 +50,7 @@ export PCV_4_NUM_CONT_CHUNKS
 export DO_PRINT_CONT_DEBUG_INFO ?= 0
 
 # warning! we ran most results with 8192 but thesis results show that 4096 is optimal for most node pairs. Be aware of this.
-export BUFFERED_CHAN_MAX_PAYLOAD_BYTES ?= 4096
+export BUFFERED_CHAN_MAX_PAYLOAD_BYTES ?= 8192
 export PROCESS_CHANNEL_BUFFERED_MSG_SIZE
 export PRINT_PROCESS_CHANNEL_STATS
 export RUN_ARGS
